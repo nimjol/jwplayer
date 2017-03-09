@@ -3,7 +3,7 @@
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 
-module.exports = function( config ) {
+module.exports = function(config) {
     var env = process.env;
     var isJenkins = !!process.env.JENKINS_HOME;
     var serverPort = process.env.KARMA_PORT || 9876;
@@ -19,13 +19,13 @@ module.exports = function( config ) {
 
     config.set({
 
-        baseUrl: '.',
-        frameworks: ['requirejs', 'qunit'],
+        // baseUrl: '.',
+        frameworks: ['qunit'],
         reporters: testReporters,
         port: serverPort, // web server port
         colors: !isJenkins, // colors in the output (reporters and logs)
         autoWatch: false, // watch file and execute tests whenever any file changes
-        singleRun: true, // if true, Karma captures browsers, runs the tests and exits
+        singleRun: 1, // if true, Karma captures browsers, runs the tests and exits
 
         client: {
             useIframe: false // use a new window for each test
@@ -63,7 +63,7 @@ module.exports = function( config ) {
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         browserDisconnectTimeout : 20 * 1000, // default 2000
         browserDisconnectTolerance : 1, // default 0
-        browserNoActivityTimeout : 100 * 1000, //default 10000
+        browserNoActivityTimeout : 2 * 1000, //default 10000
         captureTimeout : 120 * 1000, //default 60000
 
         files : [
@@ -72,8 +72,8 @@ module.exports = function( config ) {
             // { pattern: 'node_modules/handlebars-loader/*.js', included: false },
             // { pattern: 'node_modules/jquery/dist/*.js', included: false },
             { pattern: 'node_modules/phantomjs-polyfill/*.js', included: false },
-            { pattern: 'node_modules/intersection-observer/intersection-observer.js', included: false },
-            { pattern: 'node_modules/requirejs/require.js', included: true },
+            // { pattern: 'node_modules/intersection-observer/intersection-observer.js', included: false },
+            // { pattern: 'node_modules/requirejs/require.js', included: true },
             // { pattern: 'node_modules/requirejs-handlebars/*.js', included: false },
             // { pattern: 'node_modules/requirejs-text/*.js', included: false },
             // { pattern: 'node_modules/simple-style-loader/addStyles.js', included: false },
@@ -81,7 +81,7 @@ module.exports = function( config ) {
             // { pattern: 'node_modules/sinon/**/*.js', included: false },
 
             // Require Config
-            { pattern: 'test/config.js', included: true },
+            // { pattern: 'test/config.js', included: true },
 
             // Source
             // { pattern: 'src/js/**/*.js', included: false },
@@ -94,6 +94,7 @@ module.exports = function( config ) {
             // { pattern: 'test/data/*.xml', included: false },
             // { pattern: 'test/mock/*.js', included: false },
             // { pattern: 'test/unit/*.js', included: false },
+            // { pattern: 'src/js/polyfills/*.js' },
             { pattern: 'test-context.js' },
         ],
 
@@ -110,6 +111,7 @@ module.exports = function( config ) {
             dir: 'reports/coverage'
         },
         webpack: {
+            umdNamedDefine: true,
             resolve: {
                 modulesDirectories: [
                     'src/js/',
@@ -165,11 +167,16 @@ module.exports = function( config ) {
                 ]
             },
             plugins: [
-                new webpack.optimize.LimitChunkCountPlugin(
-                    {
-                        maxChunks: 1
-                    }
-                )
+                new webpack.optimize.LimitChunkCountPlugin({
+                    maxChunks: 1
+                }),
+                new webpack.DefinePlugin({
+                    __SELF_HOSTED__: true,
+                    __REPO__ : '\'\'',
+                    __DEBUG__ : false,
+                    __BUILD_VERSION__:  '\'' + '7.10.0' + '\'',
+                    __FLASH_VERSION__: 11.2
+                })
             ]
         },
         // number of browsers to run at once
