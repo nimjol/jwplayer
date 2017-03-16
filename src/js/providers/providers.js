@@ -127,6 +127,7 @@ define([
             for (var i = 0; i < count; i++) {
                 var provider = this.providers[i];
                 if (this.providerSupports(provider, source)) {
+                    // console.log(provider.name + ' supports ' + source.type)
                     // prefer earlier providers
                     var priority = count - i - 1;
 
@@ -138,6 +139,8 @@ define([
                         // If provider isn't loaded, this will be undefined
                         provider: ProvidersLoaded[provider.name]
                     };
+                } else {
+                    // console.log(provider.name + ' does not support ' + source.type)
                 }
             }
 

@@ -1,7 +1,7 @@
 /* eslint-env node */
 /* eslint no-process-env: 0 */
 var webpack = require('webpack');
-var webpackConfig = require('./webpack.config.js');
+var path = require('path');
 
 module.exports = function(config) {
     var env = process.env;
@@ -19,7 +19,6 @@ module.exports = function(config) {
 
     config.set({
 
-        // baseUrl: '.',
         frameworks: ['qunit'],
         reporters: testReporters,
         port: serverPort, // web server port
@@ -68,43 +67,16 @@ module.exports = function(config) {
 
         files : [
             //3rd Party Code
-            // { pattern: 'node_modules/handlebars/dist/*.js', included: false },
-            // { pattern: 'node_modules/handlebars-loader/*.js', included: false },
-            // { pattern: 'node_modules/jquery/dist/*.js', included: false },
-            // { pattern: 'node_modules/phantomjs-polyfill/*.js', included: false },
-            // { pattern: 'node_modules/intersection-observer/intersection-observer.js', included: false },
-            // { pattern: 'node_modules/requirejs/require.js', included: true },
-            // { pattern: 'node_modules/requirejs-handlebars/*.js', included: false },
-            // { pattern: 'node_modules/requirejs-text/*.js', included: false },
-            // { pattern: 'node_modules/simple-style-loader/addStyles.js', included: false },
-            // { pattern: 'node_modules/underscore/*.js', included: false },
-            // { pattern: 'node_modules/sinon/**/*.js', included: false },
-
-            // Require Config
-            // { pattern: 'test/config.js', included: true },
-
-            // Source
-            // { pattern: 'src/js/**/*.js', included: false },
-            // { pattern: 'src/css/**/*.less', included: false },
-            // { pattern: 'src/templates/**/*.html', included: false },
-
-            // Tests
-            // { pattern: 'test/data/*.js', included: false },
-            // { pattern: 'test/data/*.json', included: false },
-            // { pattern: 'test/data/*.xml', included: false },
-            // { pattern: 'test/mock/*.js', included: false },
-            // { pattern: 'test/unit/*.js', included: false },
-            // { pattern: 'src/js/polyfills/*.js' },
+            { pattern: 'node_modules/phantomjs-polyfill/*.js', included: false },
             { pattern: 'test-context.js' },
         ],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            // source files, that you want to generate coverage for
-            'test-context.js': ['webpack'],
-            // 'src/js/*.js': ['webpack', 'coverage'],
-            // 'src/js/!(polyfill)/*.js': ['webpack']
+            'test-context.js': ['webpack', 'coverage'],
+            // 'src/js/*.js': ['coverage'],
+            // 'src/js/!(polyfill)/*.js': ['coverage']
         },
         coverageReporter: {
             type: 'html',
@@ -117,14 +89,15 @@ module.exports = function(config) {
                     'src/js/',
                     'src',
                     'src/js/polyfills/',
-                    'node_modules'
+                    'node_modules',
                 ],
                 alias: {
-                    'test/underscore': '../../node_modules/underscore/underscore.js',
-                    'jquery': '../../node_modules/jquery/dist/jquery.js',
-                    'sinon': '../../node_modules/sinon/pkg/sinon.js',
-                    'data': '../../test/data',
-                    'mock': '../../test/mock',
+                    'test/underscore': path.resolve(__dirname + '/node_modules/underscore/underscore.js'),
+                    'jquery': path.resolve(__dirname + '/node_modules/jquery/dist/jquery.js'),
+                    'sinon': path.resolve(__dirname + '/node_modules/sinon/pkg/sinon.js'),
+                    'data': path.resolve(__dirname + '/test/data'),
+                    'mock': path.resolve(__dirname + '/test/mock'),
+                    'utils/video': path.resolve(__dirname + '/test/mock/video.js')
                 }
             },
             module: {
