@@ -63,7 +63,7 @@ module.exports = function(config) {
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         browserDisconnectTimeout : 20 * 1000, // default 2000
         browserDisconnectTolerance : 1, // default 0
-        browserNoActivityTimeout : 2 * 1000, //default 10000
+        browserNoActivityTimeout : 10 * 1000, //default 10000
         captureTimeout : 120 * 1000, //default 60000
 
         files : [
@@ -71,7 +71,7 @@ module.exports = function(config) {
             // { pattern: 'node_modules/handlebars/dist/*.js', included: false },
             // { pattern: 'node_modules/handlebars-loader/*.js', included: false },
             // { pattern: 'node_modules/jquery/dist/*.js', included: false },
-            { pattern: 'node_modules/phantomjs-polyfill/*.js', included: false },
+            // { pattern: 'node_modules/phantomjs-polyfill/*.js', included: false },
             // { pattern: 'node_modules/intersection-observer/intersection-observer.js', included: false },
             // { pattern: 'node_modules/requirejs/require.js', included: true },
             // { pattern: 'node_modules/requirejs-handlebars/*.js', included: false },
@@ -116,6 +116,7 @@ module.exports = function(config) {
                 modulesDirectories: [
                     'src/js/',
                     'src',
+                    'src/js/polyfills/',
                     'node_modules'
                 ],
                 alias: {
@@ -127,6 +128,7 @@ module.exports = function(config) {
                 }
             },
             module: {
+                umdNamedDefine: true,
                 loaders: [
                     {
                         test: /\.less$/,
