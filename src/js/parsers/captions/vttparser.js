@@ -423,7 +423,6 @@ define(['parsers/captions/vttcue'], function(VTTCue) {
                     }
                 } catch (e) {
                     errorHandler(e);
-                    self.flush();
                     return this;
                 }
             }
