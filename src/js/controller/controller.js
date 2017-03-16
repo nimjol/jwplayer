@@ -380,10 +380,12 @@ define([
             function _onVisibilityChange() {
                 _updateViewable();
                 var viewable = _model.get('viewable');
-                if (viewable && _model.get('playOnViewable')) {
-                    _autoStart();
-                } else if (!viewable && utils.isMobile()) {
-                    _this.pause({ reason: 'autostart' });
+                if (_model.get('playOnViewable')) {
+                    if (viewable) {
+                        _autoStart();
+                    } else if (utils.isMobile()) {
+                        _this.pause({ reason: 'autostart' });
+                    }
                 }
             }
 
@@ -917,8 +919,8 @@ define([
 
             this.playerDestroy = function () {
                 this.stop();
-                this.showView(this.originalContainer);
                 _stopObserving();
+                this.showView(this.originalContainer);
 
                 if (_view) {
                     _view.destroy();
