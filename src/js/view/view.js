@@ -10,7 +10,6 @@ define([
     'view/captionsrenderer',
     'view/logo',
 
-    'view/components/nextuptooltip',
     'view/dock',
     'view/components/button',
 
@@ -19,7 +18,7 @@ define([
     'templates/player.html',
 ], function(utils, _, events, states, Events, Constants, activeTab, setBreakpoint, CaptionsRenderer, Logo,
 
-            NextUpToolTip, Dock, button,
+            Dock, button,
 
             Preview, Title, playerTemplate) {
 
@@ -45,7 +44,6 @@ define([
         var _dock;
         var _logo;
         var _title;
-        var _nextuptooltip;
         var _mute;
         var _captionsRenderer;
         var _resizeMediaTimeout = -1;
@@ -442,7 +440,6 @@ define([
 
             _logo = new Logo(_model);
             _logo.setup(_playerElement);
-            _playerElement.appendChild(_logo.element());
 
             // captions rendering
             _captionsRenderer = new CaptionsRenderer(_model);
@@ -520,7 +517,7 @@ define([
         }
 
         function _componentFadeListeners(comp) {
-            if (comp && !_isMobile) {
+            if (!_isMobile && comp && comp.element()) {
                 comp.element().addEventListener('mousemove', _overControlElement, false);
                 comp.element().addEventListener('mouseout', _offControlElement, false);
             }
@@ -591,8 +588,8 @@ define([
 
             var rightside = document.createElement('div');
             rightside.className = 'jw-controls-right jw-reset';
-            rightside.appendChild(_dock.element());
             _logo.setup(rightside);
+            rightside.appendChild(_dock.element());
             controlsLayer.appendChild(rightside);
 
             _logo.on(events.JWPLAYER_LOGO_CLICK, _logoClickHandler);
@@ -617,13 +614,6 @@ define([
                 _model.on('change:autostartMuted', _autoplayUnmute);
                 _model.on('change:mute', _autoplayUnmute);
             }
-            if (_model.get('nextUpDisplay')) {
-                _nextuptooltip = new NextUpToolTip(_model, _api, _playerElement);
-                _nextuptooltip.setup();
-
-                // NextUp needs to be behind the controlbar to not block other tooltips
-                controlsLayer.appendChild(_nextuptooltip.element());
-            }
 
             _model.on('change:scrubbing', _dragging);
             _componentFadeListeners(_controls.controlbar);
@@ -633,6 +623,8 @@ define([
         };
 
         this.removeControls = function () {
+            _logo.setup(_playerElement);
+
             if (_controls) {
                 _controls.disable();
             }
