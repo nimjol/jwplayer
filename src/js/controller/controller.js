@@ -154,28 +154,6 @@ define([
                     mute: mute
                 });
             });
-            _model.change('controls', function(model, mode) {
-                if (mode) {
-                    ControlsLoader.load()
-                        .then(function (Controls) {
-                            var controls = new Controls(document, _this.currentContainer);
-                            _view.addControls(controls);
-                            controls.on('all', _triggerAfterReady, _this);
-                        })
-                        .catch(function (reason) {
-                            _this.triggerError({
-                                message: 'Controls failed to load',
-                                reason: reason
-                            });
-                        });
-                } else {
-                    _view.removeControls();
-                }
-
-                _this.trigger(events.JWPLAYER_CONTROLS, {
-                    controls: mode
-                });
-            });
 
             _model.on('change:scrubbing', function(model, state) {
                 if (state) {
@@ -215,6 +193,29 @@ define([
                 if (viewSetup) {
                     _this.showView(_view.element());
                     _observePlayerContainer(_view.element());
+
+                    model.change('controls', function(changedModel, mode) {
+                        if (mode) {
+                            ControlsLoader.load()
+                                .then(function (Controls) {
+                                    var controls = new Controls(document, _this.currentContainer);
+                                    _view.addControls(controls);
+                                    controls.on('all', _triggerAfterReady, _this);
+                                })
+                                .catch(function (reason) {
+                                    _this.triggerError({
+                                        message: 'Controls failed to load',
+                                        reason: reason
+                                    });
+                                });
+                        } else {
+                            _view.removeControls();
+                        }
+
+                        _this.trigger(events.JWPLAYER_CONTROLS, {
+                            controls: mode
+                        });
+                    });
                 }
             });
 
@@ -223,8 +224,6 @@ define([
 
                 _view.on('all', _triggerAfterReady, _this);
 
-                // Mobile players always wait to become viewable. Desktop players must have autostart set to viewable
-                _model.set('playOnViewable', _model.autoStartOnMobile() || _model.get('autostart') === 'viewable');
                 _updateVisibility();
                 _updateViewable();
 
